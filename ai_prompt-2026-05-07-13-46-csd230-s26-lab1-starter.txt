@@ -1,0 +1,1572 @@
+CONTEXT FOR AI MODEL
+Generated from: C:\Users\fcarella\IdeaProjects\csd230\s26\lab-1\csd230-s26-lab1-starter
+Timestamp: 2026-05-07-13-46
+
+--- PROJECT STRUCTURE ---
+|-- csd230-s26-lab1-starter/
+    |-- .files2ignore
+    |-- .gitattributes
+    |-- .gitignore
+    |-- docker-compose.yml
+    |-- documentation/
+        |-- bookstore-2026-01-30-142617.png
+        |-- bookstore-2026-01-30-142628.mmd
+        |-- uml1.mmd
+        |-- uml2.mmd
+    |-- HELP.md
+    |-- pom.xml
+    |-- README.md
+    |-- src/
+        |-- main/
+            |-- java/
+                |-- csd230/
+                    |-- s26/
+                        |-- lab1/
+                            |-- entities/
+                                |-- BookEntity.java
+                                |-- DiscMagEntity.java
+                                |-- MagazineEntity.java
+                                |-- ProductEntity.java
+                                |-- PublicationEntity.java
+                                |-- TicketEntity.java
+                            |-- Lab1Application.java
+                            |-- pojos/
+                                |-- Book.java
+                                |-- CashTill.java
+                                |-- DiscMag.java
+                                |-- Editable.java
+                                |-- Magazine.java
+                                |-- Product.java
+                                |-- Publication.java
+                                |-- SaleableItem.java
+                                |-- Ticket.java
+                            |-- repositories/
+                                |-- BookRepository.java
+                                |-- DiscMagRepository.java
+                                |-- MagazineRepository.java
+                                |-- ProductRepository.java
+                                |-- TicketRepository.java
+            |-- resources/
+                |-- application-mysql.properties
+                |-- application.properties
+        |-- test/
+            |-- java/
+                |-- csd230/
+                    |-- s26/
+                        |-- lab1/
+                            |-- Lab1ApplicationTests.java
+
+--------------------------------------------------
+
+--- FILE: .gitattributes ---
+```
+/mvnw text eol=lf
+*.cmd text eol=crlf
+
+```
+
+--- FILE: .gitignore ---
+```
+volumes/
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+```
+
+--- FILE: docker-compose.yml ---
+```
+services:
+  db:
+    image: mysql:8.0 # You can specify bookstore-2026-01-30.mmd different version if needed
+    environment:
+      MYSQL_ROOT_PASSWORD: itstudies12345 # Replace with bookstore-2026-01-30.mmd strong password
+      MYSQL_DATABASE: bookstore # Replace with your desired database name
+      MYSQL_USER: csd214 # Replace with your desired username
+      MYSQL_PASSWORD: itstudies12345 # Replace with bookstore-2026-01-30.mmd strong password
+    ports:
+      - "3307:3306" # Maps port 3333 on your host to port 3306 in the container
+    volumes:
+      # - db_data:/var/lib/mysql # Persists data to bookstore-2026-01-30.mmd named volume
+      - ./volumes/mysql:/var/lib/mysql # persists data to folder in the current folder
+      # You can also mount bookstore-2026-01-30.mmd custom MySQL configuration file if needed:
+      # - ./my.cnf:/etc/mysql/my.cnf
+    restart: always
+
+volumes:
+  db_data: # Define the named volume
+
+```
+
+--- FILE: documentation/bookstore-2026-01-30-142628.mmd ---
+```
+classDiagram
+    SaleableItem <|.. Editable
+    Serializable <|.. Editable
+    Editable <|-- Product
+    Product <|-- Ticket
+    Product <|-- Publication
+    Publication <|-- Book
+    Publication <|-- Magazine
+    Magazine <|-- DiscMag
+
+    Product <-- CashTill
+
+    class SaleableItem {
+        <<interface>>
+        +sellItem()
+        +getPrice() double
+    }
+
+    class Serializable {
+        <<interface>>
+    }
+
+    class Editable {
+        <<abstract>>
+        +edit(Scanner input)*
+        +initialize(Scanner input)*
+        +getInput(Scanner input, String defaultValue) String
+        +getInput(Scanner input, int defaultValue) int
+        +getInput(Scanner input, double defaultValue) double
+        +getInput(Scanner input, boolean defaultValue) boolean
+        +getInput(Scanner input, Date defaultValue) Date
+    }
+
+    class Product {
+        <<abstract>>
+        -String productId
+        +getProductId() String
+        +setProductId(String productId)
+    }
+
+    class Ticket {
+        +String description
+        +double price
+        +sellItem()
+        +getPrice() double
+        +initialize(Scanner input)
+        +edit(Scanner input)
+        +toString() String
+    }
+
+    class Publication {
+        <<Abstract>>
+        -String title
+        -double price
+        -int copies
+        +Publication()
+        +Publication(String title, double price, int copies)
+        +getPrice() double
+        +initialize(Scanner input)
+        +edit(Scanner input)
+        +toString() String
+        +equals(Object o) boolean
+        +hashCode() int
+    }
+
+    class Book {
+        -String author
+        +Book()
+        +Book(String author)
+        +Book(String author, String title, double price, int copies)
+        +initialize(Scanner input)
+        +edit(Scanner input)
+        +sellItem()
+        +toString() String
+        +equals(Object o) boolean
+        +hashCode() int
+    }
+
+    class Magazine {
+        -int orderQty
+        -Date currentIssue
+        +Magazine()
+        +Magazine(int orderQty, Date currentIssue, String title, double price, int copies)
+        +initialize(Scanner input)
+        +edit(Scanner input)
+        +sellItem()
+        +toString() String
+    }
+
+    class DiscMag {
+        -boolean hasDisc
+        +DiscMag()
+        +DiscMag(boolean hasDisc, int orderQty, Date currentIssue, String title, double price, int copies)
+        +initialize(Scanner input)
+        +edit(Scanner input)
+        +sellItem()
+        +toString() String
+    }
+
+    class CashTill {
+        -double runningTotal
+        +CashTill()
+        +showTotal()
+        +sellItem(SaleableItem item)
+        +getRunningTotal() double
+    }
+```
+
+--- FILE: documentation/uml1.mmd ---
+```
+classDiagram
+%% --- LAYER 1: Base Class ---
+    class Vehicle {
+        <<Abstract>>
+        +String manufacturer
+        +int year
+        +start()
+        +stop()
+    }
+
+%% --- LAYER 2: Categories ---
+    class LandVehicle {
+        +int numWheels
+        +String transmissionType
+        +drive()
+    }
+
+    class WaterCraft {
+        +float displacement
+        +bool isMotorized
+        +float()
+    }
+
+    class Aircraft {
+        +int maxAltitude
+        +int numEngines
+        +fly()
+    }
+
+%% --- LAYER 3: Specific Types ---
+    class Car {
+        +int numDoors
+        +bool isConvertible
+        +openTrunk()
+    }
+
+    class Motorcycle {
+        +bool hasSidecar
+        +popWheelie()
+    }
+
+    class Yacht {
+        +int numCabins
+        +bool hasHelipad
+        +dropAnchor()
+    }
+
+    class JetPlane {
+        +float wingspan
+        +retractLandingGear()
+    }
+
+%% --- Relationships (Inheritance) ---
+%% Syntax: Parent <|-- Child
+
+    Vehicle <|-- LandVehicle
+    Vehicle <|-- WaterCraft
+    Vehicle <|-- Aircraft
+
+    LandVehicle <|-- Car
+    LandVehicle <|-- Motorcycle
+
+    WaterCraft <|-- Yacht
+
+    Aircraft <|-- JetPlane
+```
+
+--- FILE: documentation/uml2.mmd ---
+```
+classDiagram
+%% Base
+    class ElectronicDevice {
+        <<Abstract>>
+        -String serialNumber
+        -double price
+        +turnOn()
+    }
+
+%% Category
+    class Computer extends ElectronicDevice {
+-int ramSizeGB
+-String processor
+}
+
+%% Specific
+class Laptop extends Computer {
+-double batteryLifeHours
+}
+
+```
+
+--- FILE: HELP.md ---
+```
+# Getting Started
+
+### Reference Documentation
+For further reference, please consider the following sections:
+
+* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
+* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/4.0.6/maven-plugin)
+* [Create an OCI image](https://docs.spring.io/spring-boot/4.0.6/maven-plugin/build-image.html)
+* [Spring Data JPA](https://docs.spring.io/spring-boot/4.0.6/reference/data/sql.html#data.sql.jpa-and-spring-data)
+
+### Guides
+The following guides illustrate how to use some features concretely:
+
+* [Accessing Data with JPA](https://spring.io/guides/gs/accessing-data-jpa/)
+* [Accessing data with MySQL](https://spring.io/guides/gs/accessing-data-mysql/)
+
+### Maven Parent overrides
+
+Due to Maven's design, elements are inherited from the parent POM to the project POM.
+While most of the inheritance is fine, it also inherits unwanted elements like `<license>` and `<developers>` from the parent.
+To prevent this, the project POM contains empty overrides for these elements.
+If you manually switch to a different parent and actually want the inheritance, you need to remove those overrides.
+
+
+```
+
+--- FILE: pom.xml ---
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.0.6</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>csd230.s26</groupId>
+	<artifactId>lab1</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name/>
+	<description/>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	<properties>
+		<java.version>25</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.javafaker</groupId>
+			<artifactId>javafaker</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
+```
+
+--- FILE: README.md ---
+```
+# Lab 1 Starter: Bookstore CLI Application
+
+This is the starter code for **Lab 1: Spring Data Repositories**. This project is based on the legacy bookstore codebase available at: [https://github.com/fcarella/bookstore-2026-01-30](https://github.com/fcarella/bookstore-2026-01-30).
+
+The objective of this lab is to transition the original object-oriented console application into a persistence-ready Spring Boot project using JPA entities and Spring Data Repositories.
+
+---
+
+# Bookstore CLI Application
+
+A console-based Java application for managing a bookstore inventory, performing sales, and tracking cash flow. This project demonstrates object-oriented programming concepts including inheritance, polymorphism, and interface implementation in Java 24.
+
+## Features
+
+*   **Inventory Management:**
+    *   **Books:** Manage items with Title, Author, Price, and Copies.
+    *   **Magazines:** Manage periodicals with Order Quantity and Issue Date.
+    *   **Disc Magazines:** Specialized magazines that include a disc.
+    *   **Tickets:** Simple saleable items with a description and price.
+*   **CRUD Operations:** Add, Edit, and Delete items from the inventory.
+*   **Sales System:** Sell items to decrement inventory count and increase the Cash Till total.
+*   **Data Generation:** Uses `JavaFaker` to populate the inventory with realistic dummy data.
+*   **Menu System:** Interactive console menu for navigation.
+
+## Class Hierarchy
+
+![Class Diagram](documentation/bookstore-2026-01-30-142617.png)
+
+The hierarchy implements the following structure:
+*   **SaleableItem (Interface):** Defines `sellItem()` and `getPrice()`.
+*   **Editable (Abstract):** Handles console input/output and parsing.
+*   **Publication:** Base class for Books and Magazines (Title, Price, Copies).
+
+## Prerequisites
+
+*   **Java JDK:** Version 24
+*   **Maven:** 3.6+
+
+## Dependencies
+
+*   [JavaFaker](https://github.com/DiUS/java-faker) (1.0.2): For generating random test data.
+*   [JUnit 5](https://junit.org/junit5/) (5.10.0): For unit testing.
+
+## How to Run
+
+1.  **Compile the project:**
+    ```bash
+    mvn clean compile
+    ```
+
+2.  **Run the application:**
+    ```bash
+    mvn exec:java -Dexec.mainClass="csd214.bookstore.Main"
+    ```
+
+## Usage
+
+Upon starting, the application will populate the list with random data. You will see the following menu:
+
+```text
+***********************
+ 1. Add Items
+ 2. Edit Items
+ 3. Delete Items
+ 4. Sell item(s)
+ 5. List items
+99. Quit
+***********************
+```
+
+*   **Add Items:** Choose a specific type (Book, Magazine, etc.) and follow the prompts.
+*   **Edit Items:** Select an index from the list to modify fields.
+*   **Sell Items:** Select an index to sell. This decreases the 'Copies' count (for Publications) and adds the price to the internal Cash Till.
+
+## Running Tests
+
+Unit tests are implemented using JUnit 5 to verify the logic of POJOs and input mocking.
+
+Run the tests using Maven:
+
+```bash
+mvn test
+```
+
+## Project Structure
+
+```
+src/
+├── main/
+│   └── java/
+│       └── csd214/
+│           └── bookstore/
+│               ├── Main.java           # Entry point
+│               ├── App.java            # Controller / Menu Logic
+│               └── pojos/              # Data Models
+│                   ├── Editable.java
+│                   ├── SaleableItem.java
+│                   ├── Product.java
+│                   ├── Publication.java
+│                   ├── Book.java
+│                   ├── Magazine.java
+│                   ├── DiscMag.java
+│                   ├── Ticket.java
+│                   └── CashTill.java
+└── test/
+    └── java/
+        └── csd214/
+            └── bookstore/
+                └── pojos/              # Unit Tests
+```
+
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/entities/BookEntity.java ---
+```
+package csd230.s26.lab1.entities;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+
+@Entity
+@DiscriminatorValue("BOOK")
+public class BookEntity extends PublicationEntity {
+    private String author;
+
+    public BookEntity() {}
+
+    public BookEntity(String author, String title, double price, int copies) {
+        this.author = author;
+        this.setTitle(title);
+        this.setPrice(price);
+        this.setCopies(copies);
+    }
+
+    // Getters and Setters
+    public String getAuthor() { return author; }
+    public void setAuthor(String author) { this.author = author; }
+
+    @Override
+    public void sellItem() {
+        System.out.println("Selling Book");
+    }
+}
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/entities/DiscMagEntity.java ---
+```
+package csd230.s26.lab1.entities;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+@Entity
+@DiscriminatorValue("DISCMAG")
+public class DiscMagEntity extends MagazineEntity {
+    private boolean hasDisc;
+
+    public DiscMagEntity() {
+        super();
+    }
+
+    public DiscMagEntity(boolean hasDisc, int orderQty, LocalDateTime currentIssue, String title, double price, int copies) {
+        super(orderQty, currentIssue, title, price, copies);
+        this.hasDisc = hasDisc;
+    }
+
+    // Getters and Setters
+    public boolean isHasDisc() { return hasDisc; }
+    public void setHasDisc(boolean hasDisc) { this.hasDisc = hasDisc; }
+
+    @Override
+    public void sellItem() {
+        System.out.println("Selling Disc Magazine: " + getTitle() + " (Has Disc: " + hasDisc + ")");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        DiscMagEntity that = (DiscMagEntity) o;
+        return hasDisc == that.hasDisc;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), hasDisc);
+    }
+
+    @Override
+    public String toString() {
+        return "DiscMagEntity{" +
+                "hasDisc=" + hasDisc +
+                "} " + super.toString();
+    }
+}
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/entities/MagazineEntity.java ---
+```
+package csd230.s26.lab1.entities;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+@Entity
+@DiscriminatorValue("MAGAZINE")
+public class MagazineEntity extends PublicationEntity {
+    private int orderQty;
+    private LocalDateTime currentIssue;
+
+    public MagazineEntity() {
+        super();
+        this.currentIssue = LocalDateTime.now();
+    }
+
+    public MagazineEntity(int orderQty, LocalDateTime currentIssue, String title, double price, int copies) {
+        super(title, price, copies);
+        this.orderQty = orderQty;
+        this.currentIssue = currentIssue;
+    }
+
+    // Getters and Setters
+    public int getOrderQty() { return orderQty; }
+    public void setOrderQty(int orderQty) { this.orderQty = orderQty; }
+
+    public LocalDateTime getCurrentIssue() { return currentIssue; }
+    public void setCurrentIssue(LocalDateTime currentIssue) { this.currentIssue = currentIssue; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        MagazineEntity that = (MagazineEntity) o;
+        return orderQty == that.orderQty && Objects.equals(currentIssue, that.currentIssue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), orderQty, currentIssue);
+    }
+
+    @Override
+    public String toString() {
+        return "MagazineEntity{" +
+                "orderQty=" + orderQty +
+                ", currentIssue=" + currentIssue +
+                "} " + super.toString();
+    }
+
+    @Override
+    public void sellItem() {
+        System.out.println("Selling Magazine");
+
+    }
+}
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/entities/ProductEntity.java ---
+```
+package csd230.s26.lab1.entities;
+
+import csd230.s26.lab1.pojos.SaleableItem;
+import jakarta.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
+import java.util.UUID;
+
+@Entity
+@Table(name = "products")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "product_type", discriminatorType = DiscriminatorType.STRING)
+public abstract class ProductEntity implements Serializable, SaleableItem {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    private String productId;
+
+
+    public ProductEntity() {
+        setProductId(UUID.randomUUID().toString());
+    }
+
+
+    // Getters and Setters
+    public String getProductId() { return productId; }
+    public void setProductId(String productId) { this.productId = productId; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductEntity that = (ProductEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(productId, that.productId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, productId);
+    }
+
+    @Override
+    public String toString() {
+        return "ProductEntity{" +
+                "id=" + id +
+                ", productId='" + productId + '\'' +
+                '}';
+    }
+}
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/entities/PublicationEntity.java ---
+```
+package csd230.s26.lab1.entities;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Entity;
+
+@Entity
+@DiscriminatorValue("PUBLICATION")
+public abstract class PublicationEntity extends ProductEntity {
+    private String title;
+    private double price;
+    private int copies;
+
+    public PublicationEntity() {
+        setTitle("Publication");
+        setPrice(0.0);
+        setCopies(0);
+    }
+
+    public PublicationEntity(String title, double price, int copies) {
+        this.title = title;
+        this.price = price;
+        this.copies = copies;
+    }
+
+    // Getters and Setters
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
+    public int getCopies() { return copies; }
+    public void setCopies(int copies) { this.copies = copies; }
+}
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/entities/TicketEntity.java ---
+```
+package csd230.s26.lab1.entities;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+
+import java.util.Objects;
+
+@Entity
+@DiscriminatorValue("TICKET")
+public class TicketEntity extends ProductEntity {
+    private String description;
+    private double price;
+
+    public TicketEntity() {}
+
+    public TicketEntity(String description, double price) {
+        this.description = description;
+        this.price = price;
+    }
+
+    // Getters and Setters
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
+
+    @Override
+    public void sellItem() {
+        System.out.println("Selling Ticket: " + description);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        TicketEntity that = (TicketEntity) o;
+        return Double.compare(price, that.price) == 0 && Objects.equals(description, that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), description, price);
+    }
+
+    @Override
+    public String toString() {
+        return "TicketEntity{" +
+                "description='" + description + '\'' +
+                ", price=" + price +
+                "} " + super.toString();
+    }
+}
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/Lab1Application.java ---
+```
+package csd230.s26.lab1;
+
+import com.github.javafaker.Faker;
+import csd230.s26.lab1.entities.*;
+import csd230.s26.lab1.repositories.*;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+
+@SpringBootApplication
+public class Lab1Application implements CommandLineRunner {
+
+	// Final fields for Constructor Injection
+	private final BookRepository bookRepository;
+	private final MagazineRepository magazineRepository;
+	private final DiscMagRepository discMagRepository;
+	private final TicketRepository ticketRepository;
+	private final ProductRepository productRepository;
+
+	// Hardened Constructor Injection (Standard for S26)
+	public Lab1Application(BookRepository bookRepository,
+						   MagazineRepository magazineRepository,
+						   DiscMagRepository discMagRepository,
+						   TicketRepository ticketRepository,
+						   ProductRepository productRepository) {
+		this.bookRepository = bookRepository;
+		this.magazineRepository = magazineRepository;
+		this.discMagRepository = discMagRepository;
+		this.ticketRepository = ticketRepository;
+		this.productRepository = productRepository;
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(Lab1Application.class, args);
+	}
+
+	/**
+	 * The run method executes after the application context is loaded.
+	 * @Transactional ensures the Hibernate Session remains open for the entire
+	 * duration of the method, preventing LazyInitializationExceptions when
+	 * accessing polymorphic collections or relationships.
+	 */
+	@Override
+	@Transactional
+	public void run(String... args) throws Exception {
+		Faker faker = new Faker();
+
+		// --- 1. Create Books ---
+		System.out.println("Generating Books...");
+		for (int i = 0; i < 3; i++) {
+			BookEntity book = new BookEntity(
+					faker.book().author(),
+					faker.book().title(),
+					Double.parseDouble(faker.commerce().price(10.0, 50.0)),
+					faker.number().numberBetween(1, 100)
+			);
+			bookRepository.save(book);
+		}
+
+		// --- 2. Create Magazines ---
+		System.out.println("Generating Magazines...");
+		for (int i = 0; i < 3; i++) {
+			MagazineEntity mag = new MagazineEntity(
+					faker.number().numberBetween(10, 100),       // Order Qty
+					LocalDateTime.now().minusDays(i),            // Current Issue Date
+					faker.book().genre() + " Magazine",          // Title
+					Double.parseDouble(faker.commerce().price(5.0, 20.0)), // Price
+					faker.number().numberBetween(10, 500)        // Copies
+			);
+			magazineRepository.save(mag);
+			System.out.println("Saved Magazine: " + mag.getTitle());
+		}
+
+		// --- 3. Create Tickets ---
+		System.out.println("Generating Tickets...");
+		for (int i = 0; i < 3; i++) {
+			String eventName = faker.commerce().department() + " " + faker.company().suffix();
+			TicketEntity ticket = new TicketEntity(
+					eventName + " Ticket",
+					Double.parseDouble(faker.commerce().price(5.0, 100.0))
+			);
+			ticketRepository.save(ticket);
+			System.out.println("Saved Ticket: " + ticket.getDescription());
+		}
+
+		// --- 4. Create DiscMags ---
+		System.out.println("Generating DiscMags...");
+		for (int i = 0; i < 3; i++) {
+			DiscMagEntity discMag = new DiscMagEntity(
+					faker.bool().bool(),                         // Has Disc?
+					faker.number().numberBetween(10, 100),       // Order Qty
+					LocalDateTime.now().minusDays(i),            // Current Issue Date
+					faker.book().title() + " (with Disc)",       // Title
+					Double.parseDouble(faker.commerce().price(10.0, 30.0)), // Price
+					faker.number().numberBetween(5, 50)          // Copies
+			);
+			discMagRepository.save(discMag);
+			System.out.println("Saved DiscMag: " + discMag.getTitle());
+		}
+
+		System.out.println("\nDatabase initialization complete.");
+
+		// --- 5. List All Products (Polymorphic Retrieval) ---
+		System.out.println("\n--- Listing All Products from ProductRepository ---");
+		productRepository.findAll().forEach(product -> {
+			// Polymorphism in action: calling toString() on the base type
+			// executes the specific implementation for the subclass.
+			System.out.println(product.toString());
+		});
+	}
+}
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/pojos/Book.java ---
+```
+package csd230.s26.lab1.pojos;
+
+import java.util.Objects;
+import java.util.Scanner;
+
+public class Book extends Publication {
+    private String author = "";
+
+    public Book() {
+        super();
+    }
+
+    public Book(String author) {
+        this.author = author;
+    }
+
+    public Book(String author, String title, double price, int copies) {
+        super(title, price, copies);
+        this.author = author;
+    }
+    @Override
+    public void initialize(Scanner input) {
+        // Pass scanner up to parent
+        super.initialize(input);
+
+        System.out.println("Enter Author:");
+        this.author = getInput(input, "Unknown Author");
+
+        // Pass scanner to helper
+        super.initPriceCopies(input);
+    }
+
+    @Override
+    public void edit(Scanner input) {
+        super.edit(input);
+        System.out.println("Edit Author [" + this.author + "]:");
+        this.author = getInput(input, this.author);
+    }
+
+
+    @Override
+    public void sellItem() {
+        System.out.println("Selling Book: " + getTitle() + " by " + author);
+        setCopies(getCopies() - 1);
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{author='" + author + "', " + super.toString() + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Book)) return false;
+        if (!super.equals(o)) return false;
+        Book book = (Book) o;
+        return Objects.equals(author, book.author);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), author);
+    }
+}
+
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/pojos/CashTill.java ---
+```
+package csd230.s26.lab1.pojos;
+
+public class CashTill {
+    private double runningTotal;
+
+    public CashTill() {
+        this.runningTotal = 0.0;
+    }
+
+    public void showTotal() {
+        System.out.println("Current Cash Till Total: $" + runningTotal);
+    }
+
+    public void sellItem(SaleableItem item) {
+        item.sellItem();
+        runningTotal += item.getPrice();
+        System.out.println("Added $" + item.getPrice() + " to till.");
+    }
+
+    public double getRunningTotal() {
+        return runningTotal;
+    }
+}
+
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/pojos/DiscMag.java ---
+```
+package csd230.s26.lab1.pojos;
+
+import java.util.Date;
+import java.util.Scanner;
+
+public class DiscMag extends Magazine {
+    private boolean hasDisc;
+
+    public DiscMag() {
+    }
+
+    public DiscMag(boolean hasDisc, int orderQty, Date currentIssue, String title, double price, int copies) {
+        super(orderQty, currentIssue, title, price, copies);
+        this.hasDisc = hasDisc;
+    }
+
+    public void initialize(Scanner input) {
+        // Pass scanner up to parent
+        super.initialize(input);
+
+        System.out.println("Has Disc? (true/false):");
+        this.hasDisc = getInput(input, false);
+    }
+
+    @Override
+    public void edit(Scanner input) {
+        super.edit(input); // Title, Price, Copies, OrderQty, Date
+
+        System.out.println("Edit Has Disc [" + this.hasDisc + "]:");
+        this.hasDisc = getInput(input, this.hasDisc);
+    }
+
+    @Override
+    public void sellItem() {
+        System.out.println("Selling Disc Magazine (Disc: " + hasDisc + ")");
+        setCopies(getCopies() - 1);
+    }
+
+    public boolean isHasDisc() { return hasDisc; }
+    public void setHasDisc(boolean h) { this.hasDisc = h; }
+
+    @Override
+    public String toString() {
+        return "DiscMag{hasDisc=" + hasDisc + ", " + super.toString() + "}";
+    }
+}
+
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/pojos/Editable.java ---
+```
+package csd230.s26.lab1.pojos;
+
+import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Scanner;
+
+public abstract class Editable implements Serializable, SaleableItem {
+
+    // REMOVED: public Scanner input = new Scanner(System.in);
+    // REMOVED: setSystemInput() - No longer needed, we inject manually.
+
+    // 1. Update Abstract Methods to accept the dependency
+    public abstract void edit(Scanner input);
+    public abstract void initialize(Scanner input);
+
+    // 2. Update Helper methods to use the passed Scanner
+    public String getInput(Scanner input, String defaultValue) {
+        // Handle empty buffer issues by reading raw
+        String ss = input.nextLine();
+        if (ss.trim().isEmpty()) {
+            return defaultValue;
+        }
+        // Return the raw string (no need for second scanner here usually)
+        return ss.trim();
+    }
+
+    public int getInput(Scanner input, int defaultValue) {
+        String s = input.nextLine();
+        if (s.trim().isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(s.trim());
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    public double getInput(Scanner input, double defaultValue) {
+        String s = input.nextLine();
+        if (s.trim().isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return Double.parseDouble(s.trim());
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    public boolean getInput(Scanner input, boolean defaultValue) {
+        String s = input.nextLine();
+        if (s.trim().isEmpty()) {
+            return defaultValue;
+        }
+        return Boolean.parseBoolean(s.trim());
+    }
+
+    public Date getInput(Scanner input, Date defaultValue) {
+        String s = input.nextLine();
+        if (s.trim().isEmpty()) {
+            return defaultValue;
+        }
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        try {
+            return formatter.parse(s.trim());
+        } catch (ParseException e) {
+            System.out.println("Invalid Date. Keeping default.");
+            return defaultValue;
+        }
+    }
+}
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/pojos/Magazine.java ---
+```
+package csd230.s26.lab1.pojos;
+
+import java.util.Date;
+import java.util.Scanner;
+
+public class Magazine extends Publication {
+    private int orderQty = 0;
+    private Date currentIssue = new Date();
+
+    public Magazine() {
+    }
+
+    public Magazine(int orderQty, Date currentIssue, String title, double price, int copies) {
+        super(title, price, copies);
+        this.orderQty = orderQty;
+        this.currentIssue = currentIssue;
+    }
+
+    @Override
+    public void initialize(Scanner input) {
+        super.initialize(input); // Title
+
+        System.out.println("Enter Order Qty:");
+        this.orderQty = getInput(input, 0);
+
+        System.out.println("Enter Current Issue Date (dd-MMM-yyyy):");
+        this.currentIssue = getInput(input, new Date());
+
+        super.initPriceCopies(input); // Copies, Price
+    }
+
+    @Override
+    public void edit(Scanner input) {
+        super.edit(input); // Title, Price, Copies
+
+        System.out.println("Edit Order Qty [" + this.orderQty + "]:");
+        this.orderQty = getInput(input, this.orderQty);
+
+        System.out.println("Edit Issue Date [" + this.currentIssue + "]:");
+        this.currentIssue = getInput(input, this.currentIssue);
+    }
+
+    @Override
+    public void sellItem() {
+        System.out.println("Selling Magazine: " + getTitle());
+        setCopies(getCopies() - 1);
+    }
+
+    public int getOrderQty() { return orderQty; }
+    public void setOrderQty(int o) { this.orderQty = o; }
+    public Date getCurrentIssue() { return currentIssue; }
+    public void setCurrentIssue(Date d) { this.currentIssue = d; }
+
+    @Override
+    public String toString() {
+        return "Magazine{orderQty=" + orderQty + ", issue=" + currentIssue + ", " + super.toString() + "}";
+    }
+}
+
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/pojos/Product.java ---
+```
+package csd230.s26.lab1.pojos;
+
+import java.io.Serializable;
+import java.util.UUID;
+
+// Marked abstract because it implements SaleableItem but doesn't implement getPrice()
+// (Price is defined in children: Ticket and Publication)
+public abstract class Product extends Editable implements SaleableItem, Serializable {
+    private String productId;
+
+    public Product() {
+        // generate a default productID
+        setProductId(UUID.randomUUID().toString());
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "productId='" + productId + '\'' +
+                "} ";
+    }
+}
+
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/pojos/Publication.java ---
+```
+package csd230.s26.lab1.pojos;
+
+import java.util.Objects;
+import java.util.Scanner;
+
+public abstract class Publication extends Product {
+    private String title = "";
+    private double price = 0.0;
+    private int copies = 0;
+
+    public Publication() {
+    }
+
+    public Publication(String title, double price, int copies) {
+        this.title = title;
+        this.price = price;
+        this.copies = copies;
+    }
+
+
+//    // Helper used by subclasses during initialize
+//    protected void initPriceCopies() {
+//        System.out.println("Enter copies:");
+//        this.copies = getInput(0);
+//
+//        System.out.println("Enter price:");
+//        this.price = getInput(0.0);
+//    }
+
+    @Override
+    public void initialize(Scanner input) {
+        System.out.println("Enter Title:");
+        this.title = getInput(input, "Available Title");
+    }
+
+    // Pass scanner to helper
+    protected void initPriceCopies(Scanner input) {
+        System.out.println("Enter copies:");
+        this.copies = getInput(input, 0);
+
+        System.out.println("Enter price:");
+        this.price = getInput(input, 0.0);
+    }
+
+    @Override
+    public void edit(Scanner input) {
+        System.out.println("Edit Title [" + this.title + "]:");
+        this.title = getInput(input, this.title);
+
+        System.out.println("Edit Price [" + this.price + "]:");
+        this.price = getInput(input, this.price);
+
+        System.out.println("Edit Copies [" + this.copies + "]:");
+        this.copies = getInput(input, this.copies);
+    }
+    @Override
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getCopies() {
+        return copies;
+    }
+
+    public void setCopies(int copies) {
+        this.copies = copies;
+    }
+
+    @Override
+    public String toString() {
+        return "Publication{" +
+                "title='" + title + '\'' +
+                ", price=" + price +
+                ", copies=" + copies +
+                "} " + super.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Publication)) return false;
+        Publication that = (Publication) o;
+        return Double.compare(that.price, price) == 0 &&
+                copies == that.copies &&
+                Objects.equals(title, that.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, price, copies);
+    }
+}
+
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/pojos/SaleableItem.java ---
+```
+package csd230.s26.lab1.pojos;
+
+public interface SaleableItem {
+    void sellItem();
+    double getPrice();
+}
+
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/pojos/Ticket.java ---
+```
+package csd230.s26.lab1.pojos;
+
+import java.util.Scanner;
+
+public class Ticket extends Product {
+    public String description = "";
+    public double price = 0.0;
+
+    @Override
+    public void sellItem() {
+        System.out.println("Selling Ticket: " + description + " for " + price);
+    }
+
+    @Override
+    public double getPrice() {
+        return price;
+    }
+
+    @Override
+    public void initialize(Scanner input) {
+        System.out.println("Enter Description:");
+        this.description = getInput(input, "Ticket");
+
+        System.out.println("Enter Price:");
+        this.price = getInput(input, 0.0);
+    }
+
+    @Override
+    public void edit(Scanner input) {
+        System.out.println("Edit Description [" + this.description + "]:");
+        this.description = getInput(input, this.description);
+
+        System.out.println("Edit Price [" + this.price + "]:");
+        this.price = getInput(input, this.price);
+    }
+
+    @Override
+    public String toString() {
+        return "Ticket{desc='" + description + "', price=" + price + "}";
+    }
+}
+
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/repositories/BookRepository.java ---
+```
+package csd230.s26.lab1.repositories;
+
+import csd230.s26.lab1.entities.BookEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface BookRepository extends JpaRepository<BookEntity, Long> {
+}
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/repositories/DiscMagRepository.java ---
+```
+package csd230.s26.lab1.repositories;
+
+import csd230.s26.lab1.entities.DiscMagEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface DiscMagRepository extends JpaRepository<DiscMagEntity, Long> {
+}
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/repositories/MagazineRepository.java ---
+```
+package csd230.s26.lab1.repositories;
+
+import csd230.s26.lab1.entities.MagazineEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface MagazineRepository extends JpaRepository<MagazineEntity, Long> {
+}
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/repositories/ProductRepository.java ---
+```
+package csd230.s26.lab1.repositories;
+
+import csd230.s26.lab1.entities.ProductEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
+}
+```
+
+--- FILE: src/main/java/csd230/s26/lab1/repositories/TicketRepository.java ---
+```
+package csd230.s26.lab1.repositories;
+
+import csd230.s26.lab1.entities.TicketEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface TicketRepository extends JpaRepository<TicketEntity, Long> {
+}
+```
+
+--- FILE: src/main/resources/application-mysql.properties ---
+```
+# Change this line:
+spring.datasource.url=jdbc:mysql://localhost:3307/csd230?createDatabaseIfNotExist=true
+
+spring.datasource.username=root
+spring.datasource.password=itstudies12345
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# Keep these as they are:
+spring.jpa.hibernate.ddl-auto=create
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+```
+
+--- FILE: src/main/resources/application.properties ---
+```
+spring.application.name=Application
+server.port=8080
+
+# Default to MySql if no profile is selected
+# see appli cation-mysql.properties
+#spring.profiles.active=h2
+spring.profiles.active=mysql
+```
+
+--- FILE: src/test/java/csd230/s26/lab1/Lab1ApplicationTests.java ---
+```
+package csd230.s26.lab1;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class Lab1ApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
+
+```
+
